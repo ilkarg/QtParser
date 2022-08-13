@@ -1,4 +1,4 @@
-QT       += core gui network core5compat
+QT       += core gui network core5compat sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

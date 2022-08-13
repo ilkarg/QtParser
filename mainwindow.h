@@ -9,6 +9,8 @@
 #include <QUrl>
 #include <QRegExp>
 #include <QFile>
+#include <QtSql>
+#include <QSqlDatabase>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
