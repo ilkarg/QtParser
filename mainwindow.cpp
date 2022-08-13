@@ -82,7 +82,6 @@ void MainWindow::replyFinished() {
         QTextStream textStream(&file);
         QSqlDatabase sdb = QSqlDatabase::addDatabase("QSQLITE");
         QSqlQuery query;
-        QString queryData;
         bool resultQuery;
 
         if (reply->error() == QNetworkReply::NoError) {
