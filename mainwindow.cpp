@@ -33,7 +33,6 @@ void MainWindow::on_parsingButton_clicked()
 {
     try {
         QRadioButton *_firstMatchRadioButton = ui->firstMatchRadioButton;
-        QRadioButton *_allMatchRadioButton = ui->allMatchRadioButton;
 
         bool linkLineEditIsEmpty = _appSystem->isEmpty(_linkLineEdit->text());
         bool regexLineEditIsEmpty = _appSystem->isEmpty(_regexLineEdit->text());
@@ -65,18 +64,50 @@ void MainWindow::replyFinished() {
         QRegExp regex(_regexLineEdit->text());
         QStringList list;
         int pos = 0;
+        bool listIsNotEmpty = false;
+        QString error = "";
+        QString domainName = _appSystem->getSiteDomainName(_linkLineEdit->text());
+        QFile file(domainName + ".txt");
+        QTextStream textStream(&file);
 
         if (reply->error() == QNetworkReply::NoError) {
             QString parsedData = reply->readAll();
             while ((pos = regex.indexIn(parsedData, pos)) != -1) {
-                 list << regex.cap(1);
-                 pos += regex.matchedLength();
-             }
+                if (matchType == "None" && matchType != "First" && matchType != "All") {
+                    error = "Не удалось определить тип парсинга";
+                }
+
+                list << regex.cap(1);
+                pos += regex.matchedLength();
+
+                if (matchType == "First") {
+                    break;
+                }
+            }
 
             for (int i = 0; i < list.count(); i++) {
                 if (!_appSystem->isEmpty(list[i])) {
+                    listIsNotEmpty = true;
                     break;
                 }
+            }
+
+            if (!listIsNotEmpty) {
+                error = "Не удалось распарсить страницу или совпадений не найдено";
+                throw error;
+            }
+
+            if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+                for (int i = 0; i < list.count(); i++) {
+                    textStream << list[i] + "\n";
+                }
+
+                file.resize(0);
+                file.close();
+            }
+            else {
+                error = "Не удалось открыть/создать файл";
+                throw error;
             }
         }
         else {

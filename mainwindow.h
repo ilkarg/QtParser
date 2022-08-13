@@ -8,6 +8,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QUrl>
 #include <QRegExp>
+#include <QFile>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
