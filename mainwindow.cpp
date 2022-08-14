@@ -73,7 +73,7 @@ void MainWindow::replyFinished() {
     try {
         QNetworkReply *reply = qobject_cast<QNetworkReply *>(sender());
         QRegExp regex(_regexLineEdit->text());
-        QStringList list;
+        QStringList valueList;
         int pos = 0;
         bool listIsNotEmpty = false;
         QString error = "";
@@ -92,7 +92,7 @@ void MainWindow::replyFinished() {
                     error = "Не удалось определить тип парсинга";
                 }
 
-                list << regex.cap(1);
+                valueList << regex.cap(1);
                 pos += regex.matchedLength();
 
                 if (matchType == "First") {
@@ -100,8 +100,8 @@ void MainWindow::replyFinished() {
                 }
             }
 
-            for (int i = 0; i < list.count(); i++) {
-                if (!_appSystem->isEmpty(list[i])) {
+            for (int i = 0; i < valueList.count(); i++) {
+                if (!_appSystem->isEmpty(valueList[i])) {
                     listIsNotEmpty = true;
                     break;
                 }
@@ -114,8 +114,8 @@ void MainWindow::replyFinished() {
 
             if (writeInFile) {
                 if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
-                    for (int i = 0; i < list.count(); i++) {
-                        textStream << list[i] + "\n";
+                    for (int i = 0; i < valueList.count(); i++) {
+                        textStream << valueList[i] + "\n";
                     }
 
                     file.resize(0);
@@ -144,8 +144,8 @@ void MainWindow::replyFinished() {
 
                 query.prepare("INSERT INTO data (value) VALUES (:value)");
 
-                for (int i = 0; i < list.count(); i++) {
-                    query.bindValue(":value", list[i]);
+                for (int i = 0; i < valueList.count(); i++) {
+                    query.bindValue(":value", valueList[i]);
                     resultQuery = query.exec();
 
                     if (!resultQuery) {
